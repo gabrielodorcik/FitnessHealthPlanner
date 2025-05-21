@@ -1,0 +1,49 @@
+[
+  { 
+    "name": "Supino reto", 
+    "muscleGroup": "Peito", 
+    "reps": 10, 
+    "sets": 4, 
+    "weight": 10, 
+    "restTime": "60s", 
+    "imgUrl": "/imgs/exercicios/supino-reto.png" 
+  },
+  { 
+    "name": "Supino inclinado", "muscleGroup": "Peito", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": "/imgs/exercicios/supino-reto.png"  },
+  { "name": "Supino declinado", "muscleGroup": "Peito", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Crucifixo", "muscleGroup": "Peito", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Peck deck", "muscleGroup": "Peito", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+
+  { "name": "Puxada frente", "muscleGroup": "Costas", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Remada baixa", "muscleGroup": "Costas", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Remada curvada", "muscleGroup": "Costas", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Puxada atrás", "muscleGroup": "Costas", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Remada unilateral", "muscleGroup": "Costas", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+
+  { "name": "Agachamento livre", "muscleGroup": "Quadriceps", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Leg press", "muscleGroup": "Quadriceps", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Cadeira extensora", "muscleGroup": "Quadriceps", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Agachamento hack", "muscleGroup": "Quadriceps", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Avanço", "muscleGroup": "Quadriceps", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+
+  { "name": "Rosca direta", "muscleGroup": "Biceps", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Rosca alternada", "muscleGroup": "Biceps", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Rosca martelo", "muscleGroup": "Biceps", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Rosca concentrada", "muscleGroup": "Biceps", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Rosca scott", "muscleGroup": "Biceps", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+
+  { "name": "Tríceps testa", "muscleGroup": "Triceps", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Tríceps corda", "muscleGroup": "Triceps", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Tríceps banco", "muscleGroup": "Triceps", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Tríceps francês", "muscleGroup": "Triceps", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Mergulho no banco", "muscleGroup": "Triceps", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+
+  { "name": "Desenvolvimento barra", "muscleGroup": "Ombro", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Desenvolvimento halteres", "muscleGroup": "Ombro", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Elevação lateral", "muscleGroup": "Ombro", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Elevação frontal", "muscleGroup": "Ombro", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+  { "name": "Remada alta", "muscleGroup": "Ombro", "reps": 10, "sets": 4, "weight": 10, "restTime": "60s", "imgUrl": null },
+
+  {"name": "Prancha", "muscleGroup": "Abdominal", "reps": null, "sets": 4, "weight": 0, "restTime": "60s", "imgUrl": null },
+  {"name": "Abdominal Infra", "muscleGroup": "Abdominal", "reps": null, "sets": 4, "weight": 0, "restTime": "60s", "imgUrl": null }
+]

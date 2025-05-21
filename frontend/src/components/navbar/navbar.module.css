@@ -1,0 +1,75 @@
+.navbarConteiner{
+    background-color: rgb(20, 11, 56);
+    display: flex;
+    align-items: center;
+    height: 96px;
+    padding: 0.5em;
+}
+
+.logo {
+    width: 5em;
+
+}
+
+.navbarItems{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    font-size: xx-large;
+}
+
+.navbarLink{
+    color: rgb(98,89,236);
+}
+
+.navbarLinksContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+}
+
+.mobileNavBarItems{
+    display: none;
+    
+}
+
+.mobileNavbarBtns{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5em;
+    font-size: xx-large;
+    padding: 0.5em;
+    
+
+}
+
+.drawer{
+    background-color:rgb(20, 11, 56);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 2em;
+    gap: 1em;
+    font-size: xx-large;
+
+}
+
+/* responsividade */
+@media screen and (max-width: 600px) {
+    .navbarItems{
+        display: none;
+    }
+
+    .mobileNavBarItems{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+    
+}

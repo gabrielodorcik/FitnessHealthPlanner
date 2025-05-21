@@ -1,0 +1,23 @@
+.popupContainer{
+    background-color: rgb(20, 11, 56);
+    color: rgb(241, 240, 244);
+}
+
+.popupContainer img {
+    height: 300px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.popuContent{
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    border: none;
+}
+
+.popuContent button {
+    background-color: rgb(98,89,236);
+    color: rgb(20, 11, 56);
+}

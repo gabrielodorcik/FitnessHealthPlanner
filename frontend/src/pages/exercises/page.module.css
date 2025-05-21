@@ -1,0 +1,30 @@
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.cardWrapper {
+  cursor: pointer;
+}
+
+.filterContainer {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.filterButton {
+  background-color: #e0e0e0;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.activeFilter {
+  background-color: #007bff;
+  color: white;
+}

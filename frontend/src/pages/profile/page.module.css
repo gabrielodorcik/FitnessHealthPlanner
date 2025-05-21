@@ -1,0 +1,38 @@
+.pageContainer{
+    padding: 0.7em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 0.5em;
+}
+
+.workoutContainer{
+    background-color: rgb(20, 11, 56);
+    color: rgb(98,89,236);
+    padding: 0.5em;
+    border-radius: 0.7em;
+    
+}
+
+.workoutsContainer{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5em;
+    border-radius: 4em;
+}
+
+.nameContainer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5em;
+    border-radius: 4em;
+}
+
+@media screen and (max-width: 800px) {
+    .workoutsContainer{
+
+    grid-template-columns: repeat(1, 1fr);
+    
+}
+}

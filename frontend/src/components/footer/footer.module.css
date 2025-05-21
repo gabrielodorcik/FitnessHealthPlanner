@@ -1,0 +1,27 @@
+.footerContainer, .linksContainer{
+
+    background: rgb(20, 11, 56);
+    color: rgb(98,89,236);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.footerContainer{
+    gap: 1em;
+    padding-bottom: 1em;
+}
+
+.footerContainer img{
+    width: 7em;
+
+}
+
+.brother{
+    color: rgb(98,89,236);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

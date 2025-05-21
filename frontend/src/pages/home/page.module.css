@@ -1,0 +1,77 @@
+.pageContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: s;
+    justify-content: center;
+    gap: 3em;  
+    padding: 2em;
+}
+
+.pageContainer  p{
+    color: #fff;
+}
+
+.bodyHomeSection{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2em;
+    background: rgb(20, 11, 56);
+    color: rgb(98,89,236);
+    padding: 2em;
+    border-radius: 2em;
+}
+
+.bodyHomeSection p {
+    color: #fff;
+}
+
+.bodyHomeSection div{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5em;
+    
+
+}
+
+.socialButtonContainer{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1em;
+
+}
+
+.socialButton{
+    width: 100%;
+    font-size: large;
+}
+
+.contactSection{
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+    
+}
+.memorial{
+   text-align: center;
+    
+}
+
+
+@media screen and (max-width: 1000px) {
+    .bodyHomeSection{
+        grid-template-columns: repeat(2, 1fr);
+        
+    }
+    .socialButtonContainer{
+        grid-template-columns: repeat(1, 1fr);
+
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .bodyHomeSection{
+        grid-template-columns: repeat(1, 1fr);
+        
+    }
+}

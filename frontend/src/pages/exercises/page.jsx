@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import Loading from '../loading/page'
 import ExerciseCard from '../../components/exerciseCard/exerciseCard'
 import ExercisePopup from '../../components/exercisePopup/exercisePopup'
+import { FaCheckCircle } from "react-icons/fa";
 import { useWorkoutContext } from '../../contexts/useWorkoutContext'
 
 export default function Exercises() {
@@ -12,7 +13,7 @@ export default function Exercises() {
     const { getAvailableExercises, exercisesList, exerciseLoading, refetchExercises  } = exerciseServices()
     const [exerciseSelected, setExerciseSelected] = useState(null);
     const [selectedGroup, setSelectedGroup] = useState("all");
-    const { addToWorkout } = useWorkoutContext()
+    const { addToWorkout, workoutItems} = useWorkoutContext()
 
      useEffect(() => {
         if(refetchExercises) {
@@ -20,6 +21,20 @@ export default function Exercises() {
         }
 
     }, [refetchExercises])
+
+
+    useEffect(() => {
+        const handleBeforeUnload = (e) => {
+          if (workoutItems.length > 0) {
+            e.preventDefault()
+            e.returnValue = "Você perderá os exercícios adicionados ao treino. Deseja continuar?"
+          }
+        }
+
+        window.addEventListener("beforeunload", handleBeforeUnload)
+        return () => window.removeEventListener("beforeunload", handleBeforeUnload)
+      }, [workoutItems])
+
 
     const filteredExercises = selectedGroup === "all"
         ? exercisesList
@@ -52,24 +67,42 @@ export default function Exercises() {
         <>
             <div>
                 {/* Filtro por grupo muscular */}
-                <select onChange={(e) => setSelectedGroup(e.target.value)} value={selectedGroup}>
-                    <option value="all">Todos</option>
-                    {uniqueGroups.map((group, index) => (
-                    <option key={index} value={group}>{group}</option>
-                    ))}
-                </select>
+                
+                <div className={styles.groupButtonsContainer}>
+                  {["all", ...uniqueGroups].map((group) => (
+                    <button
+                      key={group}
+                      className={`${styles.groupButton} ${selectedGroup === group ? styles.active : ""}`}
+                      onClick={() => setSelectedGroup(group)}
+                    >
+                      {group === "all" ? "Todos" : group}
+                    </button>
+                  ))}
+                </div>
+
 
                 {/* Grade de exercícios */}
                 <div className={styles.gridContainer}>
-                    {filteredExercises.map((exercise) => (
-                    <div
-                        key={exercise._id}
-                        className={styles.cardWrapper}
-                        onClick={() => setExerciseSelected(exercise)}
-                    >
-                        <ExerciseCard exerciseData={exercise} />
-                    </div>
-                    ))}
+                    {filteredExercises.map((exercise) => {
+                    
+                        const isSelected = workoutItems.some(item => item._id === exercise._id)
+
+                                  return (
+                                    <div
+                                      key={exercise._id}
+                                      className={styles.cardWrapper}
+                                      onClick={() => handleExerciseSelected(exercise)}
+                                    >
+                                      {isSelected && (
+                                        <div className={styles.checkOverlay}>
+                                          <FaCheckCircle className={styles.checkIcon} />
+                                        </div>
+                                      )}
+                                      <ExerciseCard exerciseData={exercise} />
+                                    </div>
+                                 )
+                    })}
+
                 </div>
 
                 {/* Popup do exercício */}
@@ -89,10 +122,3 @@ export default function Exercises() {
     )
 }
 
-{/* {exercisesList.map((exercise) => (
-                    <div>
-                        <div key={exercise._id} className={styles.cardContainer} onClick={() => { handleExerciseSelected(exercise)}}>
-                            <ExerciseCard exerciseData={exercise} />
-                        </div>
-                    </div>
-                ))} */}

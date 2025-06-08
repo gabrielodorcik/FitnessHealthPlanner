@@ -2,6 +2,10 @@ import { Dialog } from "@mui/material";
 import styles from './exercisePopup.module.css'
 
 export default function ExercisePopup({exerciseData, onClose, onAddToWorkout}){
+
+
+
+    
     return (
         <Dialog open={true} onClose={onClose}>
 

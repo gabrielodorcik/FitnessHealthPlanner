@@ -1,10 +1,11 @@
 .authPageContainer {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   padding: 2rem 1rem;
   min-height: 100vh;
-  background-color: rgb(98,89,236);
+  background-color: rgb(98, 89, 236);
 }
 
 form {
@@ -13,89 +14,68 @@ form {
   width: 100%;
   max-width: 400px;
   gap: 1rem;
-  background-color:rgb(98,89,236);
+  background-color: rgb(98, 89, 236);
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* form button {
+.submitBtn,
+.resetBtn,
+.signupBtn {
+  width: 100%;
   background-color: rgb(20, 11, 56);
-  color: white;
-  padding: 0.7rem;
+  color: rgb(98, 89, 236);
   border: none;
-  border-radius: 4px;
-  font-weight: bold;
+  padding: 1em;
+  border-radius: 0.5em;
   cursor: pointer;
   display: flex;
+  gap: 0.5em;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-} */
-
-/* form button:hover {
-  background-color: #115293;
-} */
-
-.submitBtn, .resetBtn, .signupBtn{
-    width: fit-content;
-    background-color: rgb(20, 11, 56);
-    color: rgb(98,89,236);
-    border: none;
-    padding: 1em;
-    border-radius: 0.5em;
-    cursor: pointer;
-    display: flex;
-    gap: 0.5em;
-    align-items: center;
-    justify-content: center;
-    font-size: small;
+  font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
-.signupBtn{
-    align-items: center;
-}
-
-.submitBtn:hover {
-  color: #f8f9f9;
-}
-
-.signupBtn:hover {
-  color: #f8f9f9;
-}
-
+.submitBtn:hover,
+.signupBtn:hover,
 .resetBtn:hover {
   color: #f8f9f9;
-  font-size: small;
+  background-color: rgb(30, 20, 70);
 }
-
 
 h1 {
   margin-bottom: 1rem;
   text-align: center;
+  font-size: 2rem;
+  color: white;
 }
 
 .authPageContainer p {
   text-align: center;
   font-size: 0.9rem;
+  color: white;
 }
 
 .authPageContainer p button {
-  width: fit-content;
-    background-color: rgb(20, 11, 56);
-    color: rgb(98,89,236);
-    border: none;
-    padding: 1em;
-    border-radius: 0.5em;
-    cursor: pointer;
-    display: flex;
-    gap: 0.5em;
-    align-items: center;
-    justify-content: center;
+  background-color: rgb(20, 11, 56);
+  color: rgb(98, 89, 236);
+  border: none;
+  padding: 0.75em 1em;
+  border-radius: 0.5em;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 0.5em;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
 }
 
 .authPageContainer p button:hover {
   color: #f8f9f9;
+  background-color: rgb(30, 20, 70);
 }
 
 .activeRole {
@@ -108,6 +88,7 @@ form > div {
   justify-content: center;
   gap: 1rem;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
 }
 
 form > div > button {
@@ -118,9 +99,65 @@ form > div > button {
   cursor: pointer;
 }
 
+.roleSelector {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.roleLabel {
+  font-weight: bold;
+  color: white;
+  white-space: nowrap;
+}
+
+.roleButtons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.roleButtons button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.roleButtons button:hover {
+  background-color: #eee;
+}
+
+.activeRole {
+  background-color: rgb(20, 11, 56);
+  color: white;
+}
+
+
+
+
 @media screen and (max-width: 480px) {
-  form {
+  .authPageContainer {
     padding: 1rem;
+  }
+
+  form {
+    padding: 1.5rem 1rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .submitBtn,
+  .resetBtn,
+  .signupBtn {
+    font-size: 0.95rem;
+    padding: 0.9em;
   }
 
   form > div {
@@ -128,7 +165,16 @@ form > div > button {
     align-items: center;
   }
 
-  form button {
-    font-size: 0.9rem;
+  .authPageContainer p button {
+    font-size: 0.85rem;
+    padding: 0.6em 1em;
   }
+
+  
+  .roleButtons button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    min-width: 80px;
+  }
+
 }

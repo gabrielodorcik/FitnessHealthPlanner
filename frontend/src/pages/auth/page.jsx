@@ -8,6 +8,9 @@ import Loading from "../loading/page"
 import { IconButton, InputAdornment } from "@mui/material"
 import { AlignHorizontalCenter, Visibility, VisibilityOff } from "@mui/icons-material"
 
+import { toast } from 'react-toastify';
+
+
 
 export default function Auth() {
 
@@ -31,7 +34,7 @@ export default function Auth() {
 
     useEffect(() => {
         if(authData) {
-           navigate('/workouts')
+           navigate('/portal')
         }
 
     }, [authData, navigate])
@@ -45,6 +48,17 @@ export default function Auth() {
     }
 
 
+    const isValidEmail = (email) => {
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return regex.test(email);
+    };
+
+
+    const [loginAttempts, setLoginAttempts] = useState(0);
+
+
+
+
 
     const handleFormDataChange = (e) => {
         setFormData({
@@ -54,31 +68,80 @@ export default function Auth() {
 
     }
 
-    const handleSubmitForm = async (e) => {
-         e.preventDefault()
-        setErrorMessage(null)
-
-        try {
-            if (formType === 'login') {
-            await login(formData)
-            navigate('/workouts')
-            } else if (formType === 'signup') {
-            if (formData.password !== formData.confirmPassword) {
-                setErrorMessage('As senhas não coincidem.')
-                return
-            }
-            await signup(formData)
-            navigate('/workouts')
-            } else if (formType === 'resetPassword') {
-            await resetPassword(formData)
-            alert('Se o e-mail existir, um link foi enviado para redefinir a senha.')
-            setFormType('login')
-            }
-        } catch (error) {
-            setErrorMessage(error.message || 'Erro ao processar.')
-        }
     
-    }
+    
+const handleSubmitForm = async (e) => {
+      e.preventDefault();
+      setErrorMessage(null);
+
+      try {
+        if (formType === 'login') {
+          if (!isValidEmail(formData.email)) {
+            toast.error('Por favor, insira um e-mail válido.');
+            return;
+          }
+
+          try {
+            await login(formData);
+            toast.success('Login realizado com sucesso!');
+            setLoginAttempts(0); // resetar tentativas
+            navigate('/portal');
+          } catch (error) {
+            setLoginAttempts((prev) => prev + 1);
+
+            const errorMsg = error.message?.toLowerCase() || '';
+
+            if (errorMsg.includes('usuário') || errorMsg.includes('não encontrado')) {
+              toast.error('Este e-mail não está cadastrado.');
+            } else if (errorMsg.includes('senha')) {
+              toast.error('Senha incorreta.');
+            } else {
+              toast.error('Erro ao fazer login.');
+            }
+
+            if (loginAttempts + 1 >= 3) {
+              toast.info('Esqueceu sua senha? Considere redefini-la.');
+            }
+          }
+
+        } else if (formType === 'signup') {
+          if (!isValidEmail(formData.email)) {
+            toast.error('Por favor, insira um e-mail válido.');
+            return;
+          }
+
+          if (formData.password.length < 6) {
+            toast.error('A senha deve ter pelo menos 6 caracteres.');
+            return;
+          }
+
+          if (formData.password !== formData.confirmPassword) {
+            toast.error('As senhas não coincidem.');
+            return;
+          }
+
+          await signup(formData);
+          toast.success('Cadastro realizado com sucesso!');
+          navigate('/portal');
+
+        } else if (formType === 'resetPassword') {
+
+
+          if (!isValidEmail(formData.email)) {
+            toast.error('Por favor, insira um e-mail válido.');
+            return;
+          }
+
+          await resetPassword(formData);
+          toast.info('Se o e-mail existir, um link foi enviado para redefinir a senha.');
+          setFormType('login');
+        }
+      } catch (error) {
+        toast.error(error.message || 'Erro ao processar.');
+      }
+    };
+
+
 
     if(authLoading) {
         return ( <Loading />)
@@ -91,7 +154,7 @@ export default function Auth() {
                 <>
                     <h1>Login</h1>
 
-                    {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+                    {/* {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>} */}
 
                     {/* <button onClick={handleChangeFormType}>Você não tem uma conta? Clique aqui!</button> */}
 
@@ -102,6 +165,7 @@ export default function Auth() {
                         
                         <TextField
                         required
+                        fullWidth
                         label="Email"
                         type="email"
                         name="email"
@@ -109,6 +173,7 @@ export default function Auth() {
                         />
                         <TextField
                         required
+                        fullWidth
                         label="Senha"
                         type={showPassword ? "text" : "password"}
                         name="password"
@@ -148,33 +213,37 @@ export default function Auth() {
                 <>
                     <h1>Cadastro</h1>
 
-                    {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+                    {/* {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>} */}
 
                      
 
                     <form onSubmit={handleSubmitForm}>
 
-                        <div>
+                        <div className={styles.roleSelector}>
                             <label>Você é:</label>
-                            <button
-                                type="button"
-                                className={formData.role === "aluno" ? styles.activeRole : ""}
-                                onClick={() => setFormData({ ...formData, role: "aluno" })}
-                            >
-                                Aluno
-                            </button>
-                            <button
-                                type="button"
-                                className={formData.role === "profissional" ? styles.activeRole : ""}
-                                onClick={() => setFormData({ ...formData, role: "profissional" })}
-                            >
-                                Profissional
-                            </button>
+                            <div className={styles.roleButtons}>
+                                <button
+                                    type="button"
+                                    className={formData.role === "aluno" ? styles.activeRole : ""}
+                                    onClick={() => setFormData({ ...formData, role: "aluno" })}
+                                >
+                                    Aluno
+                                </button>
+                                <button
+                                    type="button"
+                                    className={formData.role === "profissional" ? styles.activeRole : ""}
+                                    onClick={() => setFormData({ ...formData, role: "profissional" })}
+                                >
+                                    Profissional
+                                </button>
+                            </div>
                         </div>
+
 
 
                         <TextField
                         required
+                        fullWidth
                         label="Nome Completo"
                         type="fullname"
                         name="fullname"
@@ -182,6 +251,7 @@ export default function Auth() {
                         />
                         <TextField
                         required
+                        fullWidth
                         label="Email"
                         type="email"
                         name="email"
@@ -189,9 +259,10 @@ export default function Auth() {
                         />
                         <TextField
                         required
+                        fullWidth
                         label="Senha"
                         type={showPassword ? "text" : "password"}
-                        name="confirmPassword"
+                        name="password"
                         onChange={handleFormDataChange}
                         InputProps={{
                             endAdornment: (
@@ -205,9 +276,10 @@ export default function Auth() {
                         />
                         <TextField
                         rrequired
-                        label="Senha"
+                        fullWidth
+                        label="Confirme a Senha"
                         type={showPassword ? "text" : "password"}
-                        name="password"
+                        name="confirmPassword"
                         onChange={handleFormDataChange}
                         InputProps={{
                             endAdornment: (

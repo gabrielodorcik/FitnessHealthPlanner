@@ -42,24 +42,33 @@ export default function useWorkoutServices() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
+                //'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify(workoutData)
         })
-            .then((response) => response.json())
-            .then((result) => {
-                if (result.success) {
-                    getUserWorkouts(userId)
-                } else {
-                    console.log(result)
-                }
-            })
-            .catch((error) => {
-                console.log(error)
-            })
-            .finally(() => {
-                setWorkoutLoading(false)
-            })
+            
+            .then(async (response) => {
+            const result = await response.json();
+
+            if (!response.ok) {
+                console.error("Erro HTTP:", response.status, result);
+                return;
+            }
+
+            if (result.success) {
+                console.log("Treino criado com sucesso:", result);
+                getUserWorkouts(userId);
+            } else {
+                console.warn("Erro na resposta da API:", result);
+            }
+        })
+        .catch((error) => {
+            console.error("Erro na requisição:", error);
+        })
+        .finally(() => {
+            setWorkoutLoading(false);
+        });
+
     }
 
     const deleteWorkout = (id) => {

@@ -16,9 +16,11 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, async (email, passwor
     .collection(collectionName)
     .findOne({ email: email})
 
-    if(!user){
-        return callback(null, false)
+    
+    if (!user) {
+      return callback(null, false, { message: 'Usuário não encontrado' });
     }
+
 
     const saltBuffer = user.salt.buffer
 
@@ -29,9 +31,11 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, async (email, passwor
 
         const userPasswordBuffer = Buffer.from(user.password.buffer)
 
-        if(!crypto.timingSafeEqual(userPasswordBuffer, hashedPassword)){
-            return callback(null, false)
+        
+        if (!crypto.timingSafeEqual(userPasswordBuffer, hashedPassword)) {
+          return callback(null, false, { message: 'Senha incorreta' });
         }
+
 
         const { password, salt, ...rest } = user
 
@@ -105,7 +109,7 @@ authRouter.post('/signup', async (req, res) => {
 })
 
 authRouter.post('/login', (req, res) => {
-    passport.authenticate('local', (error, user) => {
+    passport.authenticate('local', (error, user, info) => {
         if(error){
             return res.status(500).send({
                 success: false,
@@ -122,7 +126,7 @@ authRouter.post('/login', (req, res) => {
                 success: false,
                 statusCode: 400,
                 body: {
-                    text: 'Credenciais incorretas!',
+                    text: info?.message || 'Credenciais incorretas!',
                 
                 }
             })

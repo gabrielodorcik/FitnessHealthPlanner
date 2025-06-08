@@ -3,126 +3,171 @@ import { useNavigate } from "react-router-dom"
 import authServices from '../../services/auth'
 import workoutServices from "../../services/workout"
 import styles from './page.module.css'
-import { BiLogOut } from "react-icons/bi";
+import { BiLogOut } from "react-icons/bi"
 import Loading from "../loading/page"
 import CompleteProfilePopup from "../../components/completeprofilePopup/completeprofilePopup"
+import defaultAvatar from "/imgs/default-avatar.png"
 
 export default function Profile() {
-    const { logout, completeProfile } = authServices()
-    const { getUserWorkouts, workoutLoading, refetchWorkouts, workoutsList } = workoutServices()
-    const navigate = useNavigate()
+  const { logout, completeProfile } = authServices()
+  const { getUserWorkouts, workoutLoading, refetchWorkouts } = workoutServices()
+  const navigate = useNavigate()
 
-    const [showPopup, setShowPopup] = useState(false)
-    const [authData, setAuthData] = useState(JSON.parse(localStorage.getItem('auth')))
+  const [showPopup, setShowPopup] = useState(false)
+  const [authData, setAuthData] = useState(JSON.parse(localStorage.getItem('auth')))
+  const [profileImage, setProfileImage] = useState(null)
 
-    useEffect(() => {
-        if (!authData) {
-            navigate('/auth')
-        } else if (refetchWorkouts) {
-            getUserWorkouts(authData?.user?._id)
-        }
-    }, [authData, refetchWorkouts])
+  useEffect(() => {
+    if (!authData) {
+      navigate('/auth')
+    } else if (refetchWorkouts) {
+      getUserWorkouts(authData?.user?._id)
+    }
+  }, [authData, refetchWorkouts])
 
-    if (workoutLoading) return <Loading />
+  if (!authData || !authData.user || workoutLoading) return <Loading />
 
-    const handleLogout = () => {
-        logout()
-        navigate('/auth')
+  const handleLogout = () => {
+    logout()
+    navigate('/auth')
+  }
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setProfileImage(reader.result)
+        // Aqui você pode preparar para enviar ao backend futuramente
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const user = authData.user
+
+
+    const formatPhone = (phone) => {
+      if (!phone) return ""
+      return phone.replace(/^(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3")
     }
 
-    const handleCompleteProfile = async (formData) => {
-        try {
-            const response = await completeProfile(authData.user._id, formData)
-
-            const updatedAuth = {
-                ...authData,
-                user: {
-                    ...authData.user,
-                    ...response, // <-- usa os dados atualizados
-                    profileCompleted: true
-                }
-            }
-
-            localStorage.setItem('auth', JSON.stringify(updatedAuth))
-            setAuthData(updatedAuth)
-            setShowPopup(false)
-        } catch (err) {
-            console.error("Erro ao atualizar:", err)
-        }
+    const formatCEP = (cep) => {
+      if (!cep) return ""
+      return cep.replace(/^(\d{5})(\d{3})$/, "$1-$2")
     }
-    console.log("Dados do usuário:", authData.user);
 
-    const updateWorkoutStatus = async (workoutId, status) => {
-        try {
-            const response = await fetch(`/api/workouts/${workoutId}/status`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ pickupStatus: status })
-            })
-
-            if (!response.ok) {
-            throw new Error("Erro ao atualizar status")
-            }
-
-            alert("Treino movido para edição com sucesso.")
-        } catch (error) {
-            console.error(error)
-            alert("Erro ao mudar status do treino.")
-        }
+    const formatCPF = (cpf) => {
+      if (!cpf) return ""
+      return cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4")
     }
 
 
-    return (
-        <div className={styles.pageContainer}>
-            <div className={styles.nameContainer}>
-                <h1>Perfil</h1>
-                <button onDoubleClick={handleLogout}>Logout <BiLogOut /></button>
-            </div>
+    const formatCREF = (cref) => {
+      if (!cref) return ""
+      return cref.replace(/\D/g, "").padStart(6, "0") // apenas números, 6 dígitos
+    }
 
-            <div className={styles.userData}>
-                <p><strong>Nome completo:</strong> {authData?.user?.fullname}</p>
-                <p><strong>Email:</strong> {authData?.user?.email}</p>
 
-                {authData?.user?.profileCompleted && (
-                    <>
-                        <p><strong>Altura:</strong> {authData?.user?.height} cm</p>
-                        <p><strong>Peso:</strong> {authData?.user?.weight} kg</p>
-                        <p><strong>Academia:</strong> {authData?.user?.gym}</p>
-                        {authData?.user?.role === 'aluno' && <p><strong>CPF:</strong> {authData?.user?.cpf}</p>}
-                        {authData?.user?.role === 'profissional' && <p><strong>CREF:</strong> {authData?.user?.cref}</p>}
-                        <p><strong>Data de Nascimento:</strong> {authData?.user?.birthDate}</p>
-                        {authData?.user?.role === 'aluno' && <p><strong>Profissional:</strong> {authData?.user?.professionalId?.fullname}</p>}
-                        {authData?.user?.role === 'profissional' && <p><strong>Alunos:</strong> {authData?.user?.cref}</p>}
-                    </>
-                )}
+    const formatDateBR = (dateString) => {
+      if (!dateString) return ""
+      const date = new Date(dateString)
+      const day = String(date.getDate()).padStart(2, '0')
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const year = date.getFullYear()
+      return `${day}/${month}/${year}`
+    }
 
-                <button onClick={() => setShowPopup(true)}>
-                    {authData?.user?.profileCompleted ? 'Editar dados' : 'Terminar cadastro'}
-                </button>
-            </div>
 
-            {showPopup && (
-                <CompleteProfilePopup
-                    userId={authData?.user?._id}
-                    onClose={() => setShowPopup(false)}
-                    onUpdate={(newData) => {
-                        const updated = {
-                            ...authData,
-                            user: {
-                                ...authData.user,
-                                ...newData,
-                                profileCompleted: true
-                            }
-                        }
-                        localStorage.setItem('auth', JSON.stringify(updated))
-                        setAuthData(updated)
-                        setShowPopup(false)
-                    }}
-                    initialData={authData?.user}
-                />
-            )}
+
+  return (
+    <div className={styles.pageContainer}>
+      <div className={styles.header}>
+        <h1>Perfil</h1>
+        <div className={styles.buttonGroup}>
+            <button onDoubleClick={handleLogout}>Logout <BiLogOut /></button>
+         <button onClick={() => setShowPopup(true)} >
+            {user.profileCompleted ? 'Editar dados' : 'Terminar cadastro'}
+          </button>
         </div>
-    )
+        
+      </div>
+
+      <div className={styles.profileGrid}>
+        {/* Coluna esquerda */}
+        <div className={styles.leftColumn}>
+          <div className={styles.avatarBox}>
+            <img
+              src={profileImage || user.photoUrl || defaultAvatar}
+              alt="Foto de perfil"
+              className={styles.avatar}
+            />
+            <label className={styles.uploadLabel}>
+              Trocar foto
+              <input type="file" accept="image/*" onChange={handleImageChange} />
+            </label>
+          </div>
+
+          <div className={styles.basicInfo}>
+            <p><strong>Nome:</strong> {user.fullname}</p>
+            <p><strong>Email:</strong> {user.email}</p>
+            <p><strong>Função:</strong> {user.role}</p>
+            {user.role === 'aluno' && <p><strong>Profissional:</strong> {user.professionalId?.fullname}</p>}
+            {user.role === 'profissional' && <p><strong>Alunos:</strong> {user.cref}</p>}
+          </div>
+        </div>
+
+        {/* Coluna direita */}
+        <div className={styles.rightColumn}>
+          <div className={styles.section}>
+            <h2>Resumo do Perfil</h2>
+            <p><strong>Altura:</strong> {user.height} cm</p>
+            <p><strong>Peso:</strong> {user.weight} kg</p>
+            
+            <p><strong>Data de Nascimento:</strong> {formatDateBR(user.birthDate)}</p>
+
+          </div>
+
+          <div className={styles.section}>
+            <h2>Contato</h2>
+            
+                <p><strong>Telefone:</strong> {formatPhone(user.phone)}</p>
+                <p><strong>CEP:</strong> {formatCEP(user.cep)}</p>
+
+          </div>
+
+          <div className={styles.section}>
+            <h2>Documentos</h2>
+            
+            {user.role === 'aluno' && <p><strong>CPF:</strong> {formatCPF(user.cpf)}</p>}
+            {user.role === 'profissional' && <p><strong>CREF:</strong> {formatCREF(user.cref)}</p>}
+
+          </div>
+
+         
+        </div>
+      </div>
+
+      {showPopup && (
+        <CompleteProfilePopup
+          userId={user._id}
+          onClose={() => setShowPopup(false)}
+          onUpdate={(newData) => {
+            const updated = {
+              ...authData,
+              user: {
+                ...user,
+                ...newData,
+                profileCompleted: true
+              }
+            }
+            localStorage.setItem('auth', JSON.stringify(updated))
+            setAuthData(updated)
+            setShowPopup(false)
+          }}
+          initialData={user}
+        />
+      )}
+    </div>
+  )
 }

@@ -1,38 +1,90 @@
-.pageContainer{
-    padding: 0.7em;
-    display: flex;
+.pageContainer {
+  padding: 1em;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 0.5em;
+}
+
+
+.profileGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2em;
+}
+
+.leftColumn {
+  flex: 1 1 250px;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+}
+
+.rightColumn {
+  flex: 2 1 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+}
+
+.avatarBox {
+  text-align: center;
+}
+
+.avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ccc;
+}
+
+.uploadLabel {
+  display: inline-block;
+  margin-top: 0.5em;
+  background-color: #eee;
+  padding: 0.5em 1em;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.uploadLabel input {
+  display: none;
+}
+
+.basicInfo, .section {
+  background-color: #f9f9f9;
+  padding: 1em;
+  border-radius: 8px;
+}
+
+.editButton {
+  margin-top: 1em;
+  padding: 0.7em 1.2em;
+  background-color: #5cb85c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+  .profileGrid {
     flex-direction: column;
-    gap: 1em;
-    padding: 0.5em;
-}
+  }
 
-.workoutContainer{
-    background-color: rgb(20, 11, 56);
-    color: rgb(98,89,236);
-    padding: 0.5em;
-    border-radius: 0.7em;
-    
-}
-
-.workoutsContainer{
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5em;
-    border-radius: 4em;
-}
-
-.nameContainer{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.5em;
-    border-radius: 4em;
-}
-
-@media screen and (max-width: 800px) {
-    .workoutsContainer{
-
-    grid-template-columns: repeat(1, 1fr);
-    
-}
+  .leftColumn, .rightColumn {
+    max-width: 100%;
+  }
 }

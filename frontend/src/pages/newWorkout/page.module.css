@@ -13,10 +13,12 @@
 }
 
 .itemsListContainer{
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 1em;
-    
+    width: 100%;
+    padding: 1em;
+    box-sizing: border-box;
 
 }
 
@@ -48,3 +50,124 @@
     
 
 }
+
+.itemContainer img {
+  width: 120px; /* antes era 200px */
+  height: auto;
+  border-radius: 1em;
+  object-fit: cover;
+}
+
+
+.exerciseCard {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.exerciseImage {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.exerciseContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.exerciseHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.muscleGroup {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+
+}
+
+.inputGroup input,
+.inputGroup select {
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.seriesControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.removeButton {
+  align-self: flex-end;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.removeButton:hover {
+  background-color: #c82333;
+}
+
+.filtersContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.filtersContainer label {
+  font-weight: bold;
+}
+
+.filtersContainer select {
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+
+
+
+@media screen and (min-width: 768px) {
+  .itemsListContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .itemsListContainer {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+

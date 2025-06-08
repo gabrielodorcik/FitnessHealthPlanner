@@ -197,6 +197,16 @@ export default function CompleteProfilePopup({ userId, onClose, onUpdate, initia
             <input type="text" name="gym" value={formData.gym} onChange={handleChange} />
           </div>
 
+          <div className={styles.formItem}>
+            <label>Telefone</label>
+            <input type="text" name="phone" value={formData.phone} onChange={handleChange} />
+          </div>
+
+          <div className={styles.formItem}>
+            <label>CEP</label>
+            <input type="text" name="cep" value={formData.cep} onChange={handleChange} />
+          </div>
+
           {(userRole || '').toLowerCase() === 'aluno' && (
             <>
               <div className={styles.formItem}>

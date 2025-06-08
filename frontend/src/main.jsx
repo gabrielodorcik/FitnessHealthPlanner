@@ -10,6 +10,9 @@ import Workouts from './pages/workouts/page.jsx'
 import Auth from './pages/auth/page.jsx'
 import Exercises from './pages/exercises/page.jsx'
 import NewWorkout from './pages/newWorkout/page.jsx'
+import Portal from './pages/portal/page.jsx'
+
+import { WorkoutProvider } from './contexts/useWorkoutContext.jsx'
 
 const pages = createBrowserRouter([  
   {
@@ -22,7 +25,8 @@ const pages = createBrowserRouter([
       { path: '/workouts', element: <Workouts />},
       { path: '/auth', element: <Auth />},
       { path: '/exercises', element: <Exercises />},
-      { path: '/newWorkout', element: <NewWorkout />}
+      { path: '/newWorkout', element: <NewWorkout />},
+      { path: '/portal', element: <Portal />}
 
     ]
 
@@ -33,6 +37,8 @@ const pages = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={pages}> </RouterProvider>
+    <WorkoutProvider>
+      <RouterProvider router={pages}> </RouterProvider>
+    </WorkoutProvider>
   </StrictMode>,
 )

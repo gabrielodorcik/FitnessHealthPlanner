@@ -1,14 +1,13 @@
-import { useState } from "react"
+import { useState } from "react";
 
 export default function useAuthServices() {
-  const [authLoading, setAuthLoading] = useState(false)
+  const [authLoading, setAuthLoading] = useState(false);
 
-  const url = 'http://localhost:3000/auth'
-  const userUrl = 'http://localhost:3000/users'
-  // const url = 'https://fhpbackend-f4guexf7cbg0etbb.canadacentral-01.azurewebsites.net/auth'
+  const url = 'http://localhost:3000/auth';
+  const userUrl = 'http://localhost:3000/users';
 
   const login = async (formData) => {
-    setAuthLoading(true)
+    setAuthLoading(true);
     try {
       const response = await fetch(`${url}/login`, {
         method: 'POST',
@@ -16,31 +15,40 @@ export default function useAuthServices() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
-      })
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result?.body?.text || 'Erro ao fazer login.')
+        // Tenta extrair mensagens específicas do backend
+        const errorText = result?.body?.text?.toLowerCase() || '';
+
+        if (errorText.includes('usuário') || errorText.includes('não encontrado')) {
+          throw new Error('usuário não encontrado');
+        } else if (errorText.includes('senha')) {
+          throw new Error('senha incorreta');
+        } else {
+          throw new Error(errorText || 'Erro ao fazer login.');
+        }
       }
 
       if (result.success && result.body.token) {
         localStorage.setItem('auth', JSON.stringify({
           token: result.body.token,
           user: result.body.user
-        }))
+        }));
       }
 
-      return result
+      return result;
     } catch (error) {
-      throw error
+      throw error;
     } finally {
-      setAuthLoading(false)
+      setAuthLoading(false);
     }
-  }
+  };
 
   const signup = async (formData) => {
-    setAuthLoading(true)
+    setAuthLoading(true);
     try {
       const response = await fetch(`${url}/signup`, {
         method: 'POST',
@@ -48,28 +56,28 @@ export default function useAuthServices() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
-      })
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result?.body?.text || 'Erro ao cadastrar.')
+        throw new Error(result?.body?.text || 'Erro ao cadastrar.');
       }
 
       if (result.success && result.body.token) {
         localStorage.setItem('auth', JSON.stringify({
           token: result.body.token,
           user: result.body.user
-        }))
+        }));
       }
 
-      return result
+      return result;
     } catch (error) {
-      throw error
+      throw error;
     } finally {
-      setAuthLoading(false)
+      setAuthLoading(false);
     }
-  }
+  };
 
   const resetPassword = async ({ email, password }) => {
     try {
@@ -79,26 +87,26 @@ export default function useAuthServices() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ email, password })
-      })
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result?.body?.text || 'Erro ao redefinir senha.')
+        throw new Error(result?.body?.text || 'Erro ao redefinir senha.');
       }
 
-      return result
+      return result;
     } catch (error) {
-      throw error
+      throw error;
     }
-  }
+  };
 
   const logout = () => {
-    localStorage.removeItem('auth')
-  }
+    localStorage.removeItem('auth');
+  };
 
   const updateUserProfile = async (userId, updatedData) => {
-    setAuthLoading(true)
+    setAuthLoading(true);
     try {
       const response = await fetch(`${userUrl}/${userId}`, {
         method: 'PUT',
@@ -106,30 +114,30 @@ export default function useAuthServices() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(updatedData)
-      })
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result?.body?.text || 'Erro ao atualizar o perfil.')
+        throw new Error(result?.body?.text || 'Erro ao atualizar o perfil.');
       }
 
       // Atualiza localStorage
-      const currentAuth = JSON.parse(localStorage.getItem('auth'))
+      const currentAuth = JSON.parse(localStorage.getItem('auth'));
       if (currentAuth?.user) {
         localStorage.setItem('auth', JSON.stringify({
           ...currentAuth,
           user: { ...currentAuth.user, ...updatedData }
-        }))
+        }));
       }
 
-      return result
+      return result;
     } catch (error) {
-      throw error
+      throw error;
     } finally {
-      setAuthLoading(false)
+      setAuthLoading(false);
     }
-  }
+  };
 
   const getProfessionals = async () => {
     try {
@@ -138,21 +146,19 @@ export default function useAuthServices() {
         headers: {
           'Content-Type': 'application/json'
         }
-      })
+      });
 
-      
-      //console.log('Resposta completa da API:', result) // << AQUI
+      const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result?.body?.text || 'Erro ao buscar profissionais.')
+        throw new Error(result?.body?.text || 'Erro ao buscar profissionais.');
       }
-      const result = await response.json()
-       console.log('Profissionais recebidos:', result) // DEBUG
-      return result.body
+
+      return result.body;
     } catch (error) {
-      throw error
+      throw error;
     }
-  }
+  };
 
   return {
     login,
@@ -162,5 +168,5 @@ export default function useAuthServices() {
     updateUserProfile,
     getProfessionals,
     authLoading
-  }
+  };
 }

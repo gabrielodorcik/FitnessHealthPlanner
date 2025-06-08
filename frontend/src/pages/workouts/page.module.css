@@ -59,3 +59,33 @@
     
 }
 }
+
+
+.statusButtonsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  justify-content: flex-start;
+}
+
+.statusButton {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.statusButton:hover {
+  background-color: #e6e6e6;
+}
+
+.statusButton.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+

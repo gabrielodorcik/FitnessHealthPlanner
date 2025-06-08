@@ -7,6 +7,8 @@ import usersRouter from './routes/users.js';
 import exercisesRouter from './routes/exercises.js';
 import workoutsRouter from './routes/workouts.js';
 //import usersRouter from './routes/users.js'
+import checkinRoutes from './routes/checkins.js'
+
 
 config()
 
@@ -36,6 +38,7 @@ async function main () {
     app.use('/profile', usersRouter)
     app.use('/exercises', exercisesRouter)
     app.use('/workouts', workoutsRouter)
+    app.use('/checkins', checkinRoutes)
 
     app.listen(port, () => {
         console.log(`Server Running on: http://${hostname}:${port}`)

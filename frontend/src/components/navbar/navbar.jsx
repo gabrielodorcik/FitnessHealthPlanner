@@ -21,10 +21,11 @@ export default function Navbar() {
                 </Link>
                 
                 <div className={styles.navbarLinksContainer}>
-                    <Link to={'/'} className={styles.navbarLink}>Home</Link>
+                    <Link to={'/portal'} className={styles.navbarLink}>Portal</Link>
                     <Link to={'/workouts'} className={styles.navbarLink}>Treinos</Link>
                     <Link to={'/exercises'} className={styles.navbarLink}>Exercicios</Link>
                     <Link to={'/newWorkout'} className={styles.navbarLink}>Criar Treino</Link>
+                    
                     <Link to={'/performance'}>
                         <BiSolidDashboard className={styles.navbarLink}/>
                     </Link>
@@ -42,9 +43,13 @@ export default function Navbar() {
                 </Link>
 
                 <div className={styles.mobileNavbarBtns}>
+
+                    <Link to={'/portal'}> <BiDumbbell className={styles.navbarLink}/></Link>
                     <Link to={'/performance'}>
                         <BiSolidDashboard className={styles.navbarLink}/>
                     </Link>
+                    
+
                     <BiMenu className={styles.navbarLink} onClick={handleOpenMenu}/>
                     
                 </div>
@@ -63,6 +68,7 @@ export default function Navbar() {
                     <Link to={'/profile'} className={styles.navbarLink} onClick={handleOpenMenu}>Profile</Link>
                     <Link to={'/exercises'} className={styles.navbarLink} onClick={handleOpenMenu}>Exercicios</Link>
                     <Link to={'/newWorkout'} className={styles.navbarLink} onClick={handleOpenMenu}>Criar treino</Link>
+
                     
                     
 

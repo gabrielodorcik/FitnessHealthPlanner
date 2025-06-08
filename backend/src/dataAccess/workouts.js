@@ -89,7 +89,12 @@ export default class WorkoutsDataAccess {
                 }
             },
             {
-                $unwind: '$workoutItems'
+                
+                $unwind: {
+                    path: '$workoutItems',
+                    preserveNullAndEmptyArrays: true
+                  }
+
             },
             {
                 $lookup: {
@@ -116,7 +121,10 @@ export default class WorkoutsDataAccess {
                     workoutName: { $first: '$workoutName' },
                     assignedToDetails: { $first: '$assignedToDetails' },
                     muscleFocus: { $first: '$muscleFocus' },
-                    description: { $first: '$description' }
+                    description: { $first: '$description' },
+                    createdAt: {$first: '$createdAt' },
+                    type: {$first: '$type' },
+                    duration: {$first: '$duration'}
                     
                 }
             }
@@ -126,47 +134,53 @@ export default class WorkoutsDataAccess {
         return result
     }
 
-    async addWorkout(workoutData) {
-        const { items, ...workoutDataRest } = workoutData
+   async addWorkout(workoutData) {
+        const { items, ...workoutDataRest } = workoutData;
 
-        workoutDataRest.createdAt = new Date()
-        workoutDataRest.pickupStatus = 'Em andamento'
-        workoutDataRest.userId = new ObjectId(workoutDataRest.userId)
-        workoutDataRest.assignedToId = new ObjectId(workoutDataRest.assignedToId)
+        workoutDataRest.createdAt = new Date();
+        workoutDataRest.pickupStatus = 'Em andamento';
+        workoutDataRest.userId = new ObjectId(workoutDataRest.userId);
+        workoutDataRest.assignedToId = workoutDataRest.assignedToId
+            ? new ObjectId(workoutDataRest.assignedToId)
+            : null;
 
         // Verifica se já existe um treino pendente para o mesmo userId
         const existingPendingWorkout = await Mongo.db
-            .collection(collectionName)
+            .collection('workouts')
             .findOne({
                 userId: workoutDataRest.userId,
                 pickupStatus: 'Em andamento'
-            })
+            });
 
         if (existingPendingWorkout) {
-            throw new Error('Já existe um treino pendente em andamento para este usuário.')
+            throw new Error('Já existe um treino pendente em andamento para este usuário.');
         }
 
-
+        // Inserir o treino
         const newWorkout = await Mongo.db
-        .collection(collectionName)
-        .insertOne(workoutDataRest)
+            .collection('workouts')
+            .insertOne(workoutDataRest);
 
-        if(!newWorkout.insertedId){
-            throw new Error('Workout cannot be inserted!')
+        if (!newWorkout.insertedId) {
+            throw new Error('Workout não pôde ser inserido!');
         }
 
-        items.map((item) => {
-            item.exerciseId = new ObjectId(item.exerciseId)
-            item.workoutId = new ObjectId(newWorkout.insertedId)
-        })
+        // Preparar os itens com referências
+        const workoutId = newWorkout.insertedId;
 
-        const result = await Mongo.db
-        .collection('workoutItems')
-        .insertMany(items)
-    
+        const itemsWithRefs = items.map((item) => ({
+            ...item,
+            exerciseId: new ObjectId(item.exerciseId),
+            workoutId,
+            label: item.label || null
+        }));
 
-        return result
+        // Inserir os exercícios
+        await Mongo.db.collection('workoutItems').insertMany(itemsWithRefs);
+
+        return { workoutId };
     }
+
 
     async deleteWorkout(workoutId){
         

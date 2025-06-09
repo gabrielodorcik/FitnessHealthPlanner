@@ -12,7 +12,7 @@ export default function Footer(){
                     <Link className={styles.link} to={'/exercises'}>Exercises</Link>
                     <Link className={styles.link} to={'/profile'}>Profile</Link>
                     <Link className={styles.link} to={'/performance'}>Performance</Link>
-                    <a href="/">Home</a>
+                    <a className={styles.link} href="/">Home</a>
                 </div>
             </div>
 

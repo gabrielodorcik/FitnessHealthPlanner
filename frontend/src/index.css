@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap'); */
 
 *{
   margin: 0;
@@ -9,9 +10,9 @@
 
 #root {
   font-size: x-large;
-  background-color: rgb(98,89,236);
+  background-color: rgb(117, 186, 108);
   min-height: 100vh;
-  color: rgb(20, 11, 56);
+  color: rgb(8, 31, 17);
 }
 
 main{
@@ -22,8 +23,8 @@ main{
 
 button{
   width: fit-content;
-  background-color: rgb(20, 11, 56);
-  color: rgb(98,89,236);
+  background-color: rgb(8, 31, 17);
+  color: rgb(89,174,78);
   border: none;
   padding: 1em;
   border-radius: 0.5em;

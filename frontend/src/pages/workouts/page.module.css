@@ -4,11 +4,20 @@
     flex-direction: column;
     gap: 1em;
     padding: 0.5em;
+    background-color: rgb(117, 186, 108);
+}
+
+.titleName{
+    font-family: "Josefin Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+    color: white;
 }
 
 .workoutContainer{
-    background-color: rgb(20, 11, 56);
-    color: rgb(98,89,236);
+    background-color: rgb(8, 31, 17);
+    color: rgb(188, 210, 185);
     padding: 0.5em;
     border-radius: 0.7em;
     
@@ -27,6 +36,7 @@
     align-items: center;
     gap: 0.5em;
     border-radius: 4em;
+    color: white;
 }
 
 .pickupStatus{

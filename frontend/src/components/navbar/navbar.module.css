@@ -1,5 +1,5 @@
 .navbarConteiner{
-    background-color: rgb(20, 11, 56);
+    background-color: rgb(8, 31, 17);
     display: flex;
     align-items: center;
     height: 96px;
@@ -22,7 +22,7 @@
 }
 
 .navbarLink{
-    color: rgb(98,89,236);
+    color: rgb(89,174,78);
 }
 
 .navbarLinksContainer{
@@ -49,7 +49,7 @@
 }
 
 .drawer{
-    background-color:rgb(20, 11, 56);
+    background-color:rgb(8, 31, 17);
     display: flex;
     flex-direction: column;
     height: 100%;

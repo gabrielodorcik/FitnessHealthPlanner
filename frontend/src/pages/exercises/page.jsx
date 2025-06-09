@@ -7,6 +7,7 @@ import ExerciseCard from '../../components/exerciseCard/exerciseCard'
 import ExercisePopup from '../../components/exercisePopup/exercisePopup'
 import { FaCheckCircle } from "react-icons/fa";
 import { useWorkoutContext } from '../../contexts/useWorkoutContext'
+import { useNavigate } from "react-router-dom"
 
 export default function Exercises() {
 
@@ -22,6 +23,8 @@ export default function Exercises() {
 
     }, [refetchExercises])
 
+
+    const navigate = useNavigate()
 
     useEffect(() => {
         const handleBeforeUnload = (e) => {
@@ -78,6 +81,9 @@ export default function Exercises() {
                       {group === "all" ? "Todos" : group}
                     </button>
                   ))}
+
+                <button onClick={() => navigate('/newWorkout')}>Ver Treino</button>
+
                 </div>
 
 

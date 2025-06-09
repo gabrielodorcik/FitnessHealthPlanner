@@ -7,16 +7,28 @@
     padding: 2em;
 }
 
-.pageContainer  p{
+.pageContainer  p {
     color: #fff;
+}
+
+.pageContainer  h1 {
+    color: rgb(8, 31, 17);
+}
+
+
+.pageContainer  h2 {
+    color: rgb(8, 31, 17);
+}
+.pageContainer  h3 {
+    color: rgb(8, 31, 17);
 }
 
 .bodyHomeSection{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2em;
-    background: rgb(20, 11, 56);
-    color: rgb(98,89,236);
+    background: rgb(8, 31, 17);
+    color: rgb(89,174,78);
     padding: 2em;
     border-radius: 2em;
 }

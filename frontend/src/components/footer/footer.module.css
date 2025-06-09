@@ -1,7 +1,6 @@
 .footerContainer, .linksContainer{
-
-    background: rgb(20, 11, 56);
-    color: rgb(98,89,236);
+    background: rgb(8, 31, 17);
+    color: rgb(89,174,78);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -20,8 +19,12 @@
 }
 
 .brother{
-    color: rgb(98,89,236);
+    color: rgb(89,174,78);
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.link {
+    color: rgb(89,174,78);
 }

@@ -74,16 +74,13 @@ export default function Workouts() {
       <div className={styles.nameContainer}>
         <h1>Meus Treinos</h1>
         <p>
-          Hoje:{" "}
-          {new Date().toLocaleDateString("pt-BR", {
+          {" "}
+          {new Date().toLocaleDateString("PT-BR", {
             weekday: "long",
             day: "numeric",
             month: "long"
-          })}
+          }).toUpperCase()}
         </p>
-
-        
-       
 
        
 
@@ -106,7 +103,7 @@ export default function Workouts() {
         <div className={styles.workoutsContainer}>
           {filteredWorkouts.map((workout) => (
             <div key={workout._id} className={styles.workoutContainer}>
-              <h2>Nome: {workout.workoutName || "Sem nome"}</h2>
+              <h2 className={styles.titleName}>{workout.workoutName || "Sem nome"}</h2>
               <h4>Treino para: {workout.assignedToId || authData?.user?.fullname}</h4>
               <h4>Tipo: {workout.type}</h4>
 

@@ -21,7 +21,7 @@ export default function FHPHelpChat({ onClose }) {
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
-          Authorization: 'Bearer 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',
+          Authorization: 'Bearer <add-your-key>',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({

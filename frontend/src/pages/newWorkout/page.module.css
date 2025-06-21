@@ -155,6 +155,35 @@
   font-size: 1rem;
 }
 
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.leftSide {
+  flex-shrink: 0;
+}
+
+.filtersContainer {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filtersContainer label {
+  font-weight: 500;
+}
+
+.filtersContainer select {
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
 
 
 
@@ -167,6 +196,58 @@
 @media screen and (min-width: 1024px) {
   .itemsListContainer {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .filtersContainer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+  }
+
+  .filtersContainer label {
+    font-size: 0.95rem;
+  }
+
+  .filtersContainer select {
+    font-size: 0.95rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .itemsListContainer {
+    grid-template-columns: 1fr;
+    padding: 0.5rem;
+    gap: 0.8rem;
+  }
+
+  .exerciseCard {
+    padding: 0.8rem;
+    gap: 0.8rem;
+  }
+
+  .exerciseImage {
+    height: 140px;
+  }
+
+  .exerciseContent {
+    gap: 0.8rem;
+  }
+
+  .removeButton {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .inputGroup input,
+  .inputGroup select {
+    font-size: 0.95rem;
+    padding: 0.4rem 0.5rem;
+  }
+
+  .confirmBtn {
+    font-size: 1rem;
+    bottom: 1em;
   }
 }
 

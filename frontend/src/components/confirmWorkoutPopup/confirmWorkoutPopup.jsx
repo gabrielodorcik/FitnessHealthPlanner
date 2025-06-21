@@ -1,27 +1,31 @@
 import Dialog from "@mui/material/Dialog";
 import styles from './confirmWorkoutPopup.module.css';
-import TextField from "@mui/material/TextField";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import authServices from "../../services/auth"; // Assumindo que já existe
 
-export default function ConfirmWorkoutPopup({ open, onClose, onConfirm, students = [], workoutItems = [] }) {
+export default function ConfirmWorkoutPopup({ open, onClose, onConfirm, workoutItems = [], editingWorkout = null }) {
   const authData = JSON.parse(localStorage.getItem('auth'));
   const userName = authData?.user?.fullname || "";
-  const userRole = authData?.user?.role || "";
+  const userRole = authData?.user?.role?.toLowerCase() || "";
+
+  const { getStudents } = authServices();
+
+  const [students, setStudents] = useState([]);
 
   const [muscleGroups] = useState([
-    "Peito", "Costas", "Pernas", "Bíceps", "Tríceps", "Ombros", "Abdômen", "Glúteos"
+    "Peito", "Costas", "Quadriceps", "Bíceps", "Tríceps", "Ombros", "Abdômen",
   ]);
 
   const [formData, setFormData] = useState({
     workoutName: "",
     description: "",
-    type: "ABC",
+    type: "",
     muscleFocus: [],
     createdAt: "",
     duration: "",
     createdBy: userName,
-    assignedBy: userRole === "Aluno" ? userName : "",
+    assignedBy: userRole === "aluno" ? userName : "",
     assignedStudentId: "",
   });
 
@@ -32,9 +36,31 @@ export default function ConfirmWorkoutPopup({ open, onClose, onConfirm, students
     setFormData((prev) => ({
       ...prev,
       createdBy: userName || "",
-      assignedBy: userRole === "Aluno" ? userName : prev.assignedBy,
+      assignedBy: userRole === "aluno" ? userName : prev.assignedBy,
     }));
   }, [userName, userRole]);
+
+  useEffect(() => {
+    if (userRole === "profissional") {
+      getStudents().then(setStudents).catch(console.error);
+    }
+  }, [userRole]);
+
+  useEffect(() => {
+    if (editingWorkout) {
+      setFormData({
+        workoutName: editingWorkout.workoutName || "",
+        description: editingWorkout.description || "",
+        type: editingWorkout.type || "",
+        muscleFocus: editingWorkout.muscleFocus?.split(',') || [],
+        createdAt: editingWorkout.createdAt?.slice(0, 10) || "",
+        duration: editingWorkout.duration?.slice(0, 10) || "",
+        createdBy: editingWorkout.createdBy?.fullname || userName,
+        assignedBy: editingWorkout.assignedBy || "",
+        assignedStudentId: editingWorkout.assignedToId || "",
+      });
+    }
+  }, [editingWorkout]);
 
   const handleConfirm = (e) => {
     e.preventDefault();
@@ -46,7 +72,12 @@ export default function ConfirmWorkoutPopup({ open, onClose, onConfirm, students
       return;
     }
 
-    const isProfessor = userRole === "Professor";
+    if (!workoutItems || workoutItems.length === 0) {
+      alert("Você precisa adicionar exercícios ao treino antes de confirmar.");
+      return;
+    }
+
+    const isProfessor = userRole === "profissional";
     const userId = isProfessor ? formData.assignedStudentId : authData?.user?._id;
     const assignedToId = isProfessor ? authData?.user?._id : null;
 
@@ -99,17 +130,19 @@ export default function ConfirmWorkoutPopup({ open, onClose, onConfirm, students
 
   return (
     <Dialog 
-        open={open}
-        onClose={onClose}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-        style: {
-          margin: '1em',
-          borderRadius: '12px',
-          overflowX: 'hidden',
-        }
-      }}
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      PaperProps={{
+        style: {
+          margin: 0,
+          borderRadius: '12px',
+          overflowX: 'hidden',
+          padding: 0,
+          maxHeight: '90vh', 
+        }
+      }}
     >
       <div className={styles.popupContainer}>
         <h2>Estamos quase lá...</h2>
@@ -125,6 +158,7 @@ export default function ConfirmWorkoutPopup({ open, onClose, onConfirm, students
                 value={formData.createdAt}
                 onChange={handleForDataChange}
                 required
+                disabled={!!editingWorkout}
               />
             </label>
 
@@ -167,6 +201,9 @@ export default function ConfirmWorkoutPopup({ open, onClose, onConfirm, students
               value={formData.type}
               onChange={handleForDataChange}
             >
+              <option value="">Selecione o tipo</option>
+              <option value="A">A</option>
+              <option value="AB">AB</option>
               <option value="ABC">ABC</option>
               <option value="ABCD">ABCD</option>
               <option value="ABCDE">ABCDE</option>
@@ -208,9 +245,9 @@ export default function ConfirmWorkoutPopup({ open, onClose, onConfirm, students
             <input type="text" value={formData.createdBy} disabled />
           </label>
 
-          {userRole === "Professor" && (
+          {userRole === "profissional" && (
             <label>
-              Atribuído para:
+              Treino para:
               <select
                 name="assignedStudentId"
                 value={formData.assignedStudentId}
@@ -219,14 +256,14 @@ export default function ConfirmWorkoutPopup({ open, onClose, onConfirm, students
                 <option value="">Selecione um aluno</option>
                 {students.map((student) => (
                   <option key={student._id} value={student._id}>
-                    {student.name}
+                    {student.fullname || student.email}
                   </option>
                 ))}
               </select>
             </label>
           )}
 
-          {userRole === "Aluno" && (
+          {userRole === "aluno" && (
             <label>
               Atribuído para:
               <input type="text" value={formData.assignedBy} disabled />

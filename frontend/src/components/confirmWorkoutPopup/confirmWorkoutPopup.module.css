@@ -2,12 +2,24 @@
   display: flex;
   flex-direction: column;
   gap: 1em;
-  padding: 1.5em;
+  padding: 1.5em 1em; 
   background-color: #fff;
-  width: 100%;
+  width: 100%; 
+  max-width: 500px; 
+  margin: 0 auto; 
   box-sizing: border-box;
+  max-height: 90vh; 
+  overflow-y: auto; 
 }
 
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: 70vh;
+}
 
 
 .confirmBtn{
@@ -94,4 +106,55 @@ button[type="submit"] {
   padding: 0.5em 1.2em;
   border-radius: 6px;
   cursor: pointer;
+}
+
+@media (max-width: 400px) {
+  .popupContainer {
+    padding: 1em 0.8em;
+    max-width: 100%;
+    max-height: 90vh;
+  }
+
+  .formContainer {
+    gap: 0.8em;
+    max-height: 75vh;
+  }
+
+  .dateRow {
+    flex-direction: column;
+    gap: 0.5em;
+  }
+
+  input[type="date"],
+  input[type="text"],
+  textarea,
+  select {
+    font-size: 0.9rem;
+    padding: 0.4em;
+  }
+
+  .confirmBtn {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5em;
+  }
+
+  .cancelBtn,
+  button[type="submit"] {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .tagsContainer {
+    gap: 6px;
+  }
+
+  .tag {
+    font-size: 0.85rem;
+    padding: 3px 8px;
+  }
+
+  .tag button {
+    margin-left: 6px;
+  }
 }

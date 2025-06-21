@@ -78,19 +78,25 @@ export default function Portal() {
     };
 
 
-    const handleCheckinClick = async () => {
-        const checkins = await checkinServices.getCheckinsByUser(authData.user._id);
-        const today = new Date().toDateString();
+  const handleCheckinClick = async () => {
+        if (routineToday === "Folga") {
+            toast.info("Hoje é folga, não é necessário fazer check-in.");
+            return;
+        }
 
-        const todayCheckin = checkins.find(c => new Date(c.createdAt).toDateString() === today);
+        const checkins = await checkinServices.getCheckinsByUser(authData.user._id);
+        const today = new Date().toDateString();
 
-        if (todayCheckin) {
-            const time = new Date(todayCheckin.createdAt).toLocaleTimeString('pt-BR');
-            toast.info(`Você já fez check-in hoje às ${time}.`);
-        } else {
-            setShowCheckinPopup(true);
-        }
-    };
+        const todayCheckin = checkins.find(c => new Date(c.createdAt).toDateString() === today);
+
+        if (todayCheckin) {
+            const time = new Date(todayCheckin.createdAt).toLocaleTimeString('pt-BR');
+            toast.info(`Você já fez check-in hoje às ${time}.`);
+        } else {
+            setShowCheckinPopup(true);
+        }
+  };
+
 
 
 
@@ -176,9 +182,9 @@ export default function Portal() {
                         Ver treino completo
                     </button>
 
-                    <button className={styles.secondaryButton} onClick={() => setShowCheckinPopup(true)}>
-                        Check-in
-                    </button>
+                    <button className={styles.secondaryButton} onClick={handleCheckinClick}>
+                    Check-in
+                </button>
                 </div>
 
             
@@ -199,10 +205,15 @@ export default function Portal() {
                         <h4>Treino para: {workout.assignedToId || authData?.user?.fullname}</h4>
                         
                         
-                    <h4>
-                      Duração até:{workout.duration}
-                      
-                    </h4>
+                    
+                        <h4>
+                            Duração até: {new Date(workout.duration).toLocaleDateString('pt-BR', {
+                                day: '2-digit',
+                                month: 'long',
+                                year: 'numeric'
+                            })}
+                        </h4>
+
 
 
 
@@ -265,7 +276,9 @@ export default function Portal() {
                                     </div>
                                 </div>
                             )) : (
-                                <p>Nenhum exercício para a rotina de hoje.</p>
+                                
+                                <p>{routineToday === "Folga" ? "Hoje é folga. Aproveite para descansar!" : "Nenhum exercício para a rotina de hoje."}</p>
+
                             )}
                         </div>
 

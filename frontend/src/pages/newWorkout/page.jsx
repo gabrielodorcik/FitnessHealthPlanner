@@ -12,9 +12,11 @@ import { toast } from 'react-toastify';
 export default function NewWorkout() {
     const { workoutItems, updateFromWorkout, removeFromWorkout, clearWorkout, setWorkoutItems } = useWorkoutContext();
     const [confirmPopupOpen, setConfirmPopupOpen] = useState(false);
-    const { sendWorkout, getUserWorkouts } = workoutServices();
+    const { sendWorkout, getUserWorkouts, updateWorkout} = workoutServices();
     const navigate = useNavigate();
+    
     const [editingWorkoutId, setEditingWorkoutId] = useState(null);
+    const [editingWorkoutData, setEditingWorkoutData] = useState(null);
     const [hasPendingWorkout, setHasPendingWorkout] = useState(false);
     const [loading, setLoading] = useState(true);
    
@@ -29,11 +31,10 @@ export default function NewWorkout() {
     const [selectedRoutine, setSelectedRoutine] = useState("all");
 
     const filteredWorkoutItems = workoutItems.filter(item => {
-    const groupMatch = selectedGroup === "all" || item.muscleGroup === selectedGroup;
-    const routineMatch = selectedRoutine === "all" || item.routineLetter === selectedRoutine;
-    return groupMatch && routineMatch;
+        const groupMatch = selectedGroup === "all" || item.muscleGroup === selectedGroup;
+        const routineMatch = selectedRoutine === "all" || item.routineLetter === selectedRoutine;
+        return groupMatch && routineMatch;
     });
-
 
     useEffect(() => {
         if (!authData) {
@@ -44,7 +45,6 @@ export default function NewWorkout() {
         async function fetchWorkouts() {
             try {
                 const workouts = await getUserWorkouts(userId);
-
                 let hasPending = false;
                 let editingWorkout = null;
 
@@ -52,18 +52,18 @@ export default function NewWorkout() {
                     if (w.pickupStatus === 'Em andamento' && w.userDetails?.[0]?._id === userId) {
                         hasPending = true;
                     }
-                    if (
-                        w.pickupStatus === 'Editando' &&
-                        ((typeof w.createdBy === 'string' && w.createdBy === userId) || (w.createdBy?._id === userId))
-                    ) {
-                        editingWorkout = w;
+                    
+                    if (w.pickupStatus === 'Editando') {
+                      editingWorkout = w;
                     }
+
                 }
 
                 setHasPendingWorkout(hasPending);
 
                 if (editingWorkout) {
                     setEditingWorkoutId(editingWorkout._id);
+                    setEditingWorkoutData(editingWorkout); 
 
                     const preparedItems = editingWorkout.workoutItems.map(item => {
                         const details = item.itemDetails?.[0] || (typeof item.exerciseId === 'object' ? item.exerciseId : null);
@@ -79,7 +79,7 @@ export default function NewWorkout() {
                             restTime: item.restTime,
                             sets: item.sets,
                             weight: item.weight,
-                            routineLetter: item.routineLetter || ""
+                            routineLetter: item.routineLetter ?? item.label ?? item.itemDetails?.[0]?.label ?? ""
                         };
                     }).filter(Boolean);
 
@@ -105,7 +105,7 @@ export default function NewWorkout() {
         if (hasPendingWorkout && !editingWorkoutId && workoutItems.length > 0) {
             clearWorkout();
         }
-    }, [hasPendingWorkout, editingWorkoutId, clearWorkout, workoutItems]);
+    }, [hasPendingWorkout, editingWorkoutId]);
 
     const handleInputChange = (field, itemId, value) => {
         const updatedWorkoutItems = workoutItems.map((item) => {
@@ -153,23 +153,28 @@ export default function NewWorkout() {
     };
 
     const handleConfirmWorkout = async (workoutData) => {
-        workoutData.items = workoutItems.map((item) => ({
-            exerciseId: item._id,
-            reps: item.reps,
-            restTime: item.restTime,
-            sets: item.sets,
-            weight: item.weight,
-            label: item.routineLetter || null
-        }));
+        
+        const formattedItems = workoutItems.map((item) => ({
+          exerciseId: item._id,
+          reps: item.reps,
+          restTime: item.restTime,
+          sets: item.sets,
+          weight: item.weight,
+          label: item.routineLetter || null
+        }));
 
-        console.log("Workout enviado:", workoutData);
+        const finalData = {
+              ...workoutData,
+              pickupStatus: "Em andamento",
+              items: formattedItems
+            };
 
         try {
             if (editingWorkoutId) {
-            await workoutServices().updateWorkout(editingWorkoutId, workoutData);
+            await updateWorkout(editingWorkoutId, workoutData);
             toast.success("Treino atualizado com sucesso!");
             } else {
-            await sendWorkout(workoutData, userId);
+            await sendWorkout(finalData, userId);
             toast.success("Treino criado com sucesso!");
             }
 
@@ -183,11 +188,10 @@ export default function NewWorkout() {
         }
     };
 
-
-    console.log("loading:", loading);
-    console.log("hasPendingWorkout:", hasPendingWorkout);
-    console.log("editingWorkoutId:", editingWorkoutId);
-    console.log("workoutItems:", workoutItems);
+    // console.log("loading:", loading);
+    // console.log("hasPendingWorkout:", hasPendingWorkout);
+    // console.log("editingWorkoutId:", editingWorkoutId);
+    // console.log("workoutItems:", workoutItems);
 
     if (loading) return <p>Carregando...</p>;
 
@@ -205,7 +209,7 @@ export default function NewWorkout() {
         return (
             <div>
                 <h1>Você ainda não adicionou exercícios ao seu treino</h1>
-                <Link to={'/exercises'} className={styles.navbarLink}>Veja os exercícios disponíveis!</Link>
+                <Link to={'/exercises'} className={styles.navbarLink}> Veja os exercícios disponíveis!</Link>
             </div>
         );
     }
@@ -215,30 +219,30 @@ export default function NewWorkout() {
             <div className={styles.pageContainer}>
                 <h1>{editingWorkoutId ? "Editando treino" : "Criar um treino!"}</h1>
 
-                {editingWorkoutId && (
-                    <div className={styles.editingWarning}>
-                        <h2>Você está editando um treino existente!</h2>
-                        <p>Adicione, edite ou remova os exercícios antes de confirmar.</p>
+               <div className={styles.topBar}>
+                    <div className={styles.leftSide}>
+                        <button onClick={() => navigate('/exercises')}>Voltar aos exercícios</button>
                     </div>
-                )}
 
-                <div className={styles.filtersContainer}>
-                    <label>Filtrar por grupo muscular:</label>
-                    <select value={selectedGroup} onChange={(e) => setSelectedGroup(e.target.value)}>
-                        <option value="all">Todos</option>
-                        {[...new Set(workoutItems.map(item => item.muscleGroup))].map(group => (
-                        <option key={group} value={group}>{group}</option>
-                        ))}
-                    </select>
+                    <div className={styles.filtersContainer}>
+                        <label>Filtrar por grupo muscular:</label>
+                        <select value={selectedGroup} onChange={(e) => setSelectedGroup(e.target.value)}>
+                            <option value="all">Todos</option>
+                            {[...new Set(workoutItems.map(item => item.muscleGroup))].map(group => (
+                                <option key={group} value={group}>{group}</option>
+                            ))}
+                        </select>
 
-                    <label>Filtrar por rotina:</label>
-                    <select value={selectedRoutine} onChange={(e) => setSelectedRoutine(e.target.value)}>
-                        <option value="all">Todas</option>
-                        {[...new Set(workoutItems.map(item => item.routineLetter).filter(Boolean))].map(routine => (
-                        <option key={routine} value={routine}>{routine}</option>
-                        ))}
-                    </select>
+                        <label>Filtrar por rotina:</label>
+                        <select value={selectedRoutine} onChange={(e) => setSelectedRoutine(e.target.value)}>
+                            <option value="all">Todas</option>
+                            {[...new Set(workoutItems.map(item => item.routineLetter).filter(Boolean))].map(routine => (
+                                <option key={routine} value={routine}>{routine}</option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
+
 
 
                 <section>
@@ -317,9 +321,14 @@ export default function NewWorkout() {
             </div>
 
             <ConfirmWorkoutPopup
-                open={confirmPopupOpen}
-                onClose={handleOpenPopup}
-                onConfirm={handleConfirmWorkout}
+                
+              open={confirmPopupOpen}
+              onClose={handleOpenPopup}
+              onConfirm={handleConfirmWorkout}
+
+              workoutItems={workoutItems}
+              editingWorkout={editingWorkoutData}
+
             />
         </>
     );

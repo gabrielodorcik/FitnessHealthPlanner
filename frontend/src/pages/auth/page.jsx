@@ -42,7 +42,13 @@ export default function Auth() {
     const handleChangeFormType = (type) => {
         
         setErrorMessage(null)
-        setFormData({})
+        setFormData({
+            fullname: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            role: 'aluno',
+        })
         setFormType(type)
 
     }
@@ -119,6 +125,12 @@ const handleSubmitForm = async (e) => {
             toast.error('As senhas não coincidem.');
             return;
           }
+
+        if (!formData.role) {
+            toast.error('Por favor, selecione se você é Aluno ou Profissional.');
+            return;
+        }
+
 
           await signup(formData);
           toast.success('Cadastro realizado com sucesso!');
@@ -275,7 +287,7 @@ const handleSubmitForm = async (e) => {
                         }}
                         />
                         <TextField
-                        rrequired
+                        required
                         fullWidth
                         label="Confirme a Senha"
                         type={showPassword ? "text" : "password"}

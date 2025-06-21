@@ -5,7 +5,7 @@
   align-items: center;
   padding: 2rem 1rem;
   min-height: 100vh;
-  background-color: rgb(98, 89, 236);
+  background-color:rgb(117, 186, 108);
 }
 
 form {
@@ -14,7 +14,7 @@ form {
   width: 100%;
   max-width: 400px;
   gap: 1rem;
-  background-color: rgb(98, 89, 236);
+  background-color: rgb(117, 186, 108);
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -24,8 +24,8 @@ form {
 .resetBtn,
 .signupBtn {
   width: 100%;
-  background-color: rgb(20, 11, 56);
-  color: rgb(98, 89, 236);
+  background-color: rgb(8, 31, 17);
+  color: rgb(117, 186, 108);
   border: none;
   padding: 1em;
   border-radius: 0.5em;
@@ -41,8 +41,8 @@ form {
 .submitBtn:hover,
 .signupBtn:hover,
 .resetBtn:hover {
-  color: #f8f9f9;
-  background-color: rgb(30, 20, 70);
+  color: rgb(117, 186, 108);
+  background-color: rgb(8, 31, 17);
 }
 
 h1 {
@@ -59,8 +59,8 @@ h1 {
 }
 
 .authPageContainer p button {
-  background-color: rgb(20, 11, 56);
-  color: rgb(98, 89, 236);
+  background-color: rgb(8, 31, 17);
+  color: rgb(117, 186, 108);
   border: none;
   padding: 0.75em 1em;
   border-radius: 0.5em;
@@ -121,9 +121,9 @@ form > div > button {
 
 .roleButtons button {
   padding: 0.5rem 1rem;
-  border: 1px solid #ccc;
+  border: 1px solid rgb(8, 31, 17);
   border-radius: 4px;
-  background-color: white;
+  background-color: rgb(8, 31, 17);
   cursor: pointer;
   font-size: 0.9rem;
 }
@@ -134,7 +134,7 @@ form > div > button {
 
 .activeRole {
   background-color: rgb(20, 11, 56);
-  color: white;
+  color: rgb(117, 186, 108);
 }
 
 

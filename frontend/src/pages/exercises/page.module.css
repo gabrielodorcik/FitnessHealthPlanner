@@ -3,6 +3,7 @@
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
   padding: 1rem;
+  margin-top: 2rem;
 }
 
 .cardWrapper {
@@ -29,13 +30,26 @@
   color: white;
 }
 
-
 .groupButtonsContainer {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 1rem 0;
-  justify-content: flex-start;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+  gap: 2em;
+  margin-top: 1rem;
+}
+
+.groupButtonsLeft {
+  display: flex;
+  gap: 1rem;
+}
+
+.groupButtonsRight {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .groupButton {
@@ -56,4 +70,35 @@
   background-color: #28a745;
   color: white;
   border-color: #28a745;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .groupButtonsContainer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .groupButtonsLeft,
+  .groupButtonsRight {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .gridContainer {
+    grid-template-columns: 1fr;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .groupButton {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .gridContainer {
+    gap: 1rem;
+  }
 }

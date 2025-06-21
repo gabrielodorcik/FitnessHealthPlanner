@@ -28,12 +28,26 @@ function formatCPF(value) {
   value = value.replace(/(\d{3})(\d)/, '$1.$2')
   value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2')
   return value
+
+}
+function formatPhone(value) {
+  value = value.replace(/\D/g, '')
+  if (value.length > 10) {
+    return value.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3')
+  } else {
+    return value.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3')
+  }
+}
+
+function formatCEP(value) {
+  value = value.replace(/\D/g, '')
+  return value.replace(/^(\d{5})(\d{3})$/, '$1-$2')
 }
 
 function formatCREF(value) {
   value = value.toUpperCase()
   value = value.replace(/[^0-9P\/SP]/g, '')
-  if (value.length > 6) {
+  if (value.length > 7) {
     value = value.slice(0, 6) + '-' + value.slice(6)
   }
   return value
@@ -44,10 +58,12 @@ function isValidCREF(cref) {
 }
 
 export default function CompleteProfilePopup({ userId, onClose, onUpdate, initialData = {} }) {
-  const { updateUserProfile, getProfessionals } = authServices()
+  const { updateUserProfile, getProfessionals, getStudents } = authServices()
   const [professionals, setProfessionals] = useState([])
   const [errors, setErrors] = useState({})
   const [userInfo, setUserInfo] = useState(null)
+  const [students, setStudents] = useState([])
+
 
   const authData = JSON.parse(localStorage.getItem('auth'))
   const userRole = authData?.user?.role
@@ -62,6 +78,10 @@ export default function CompleteProfilePopup({ userId, onClose, onUpdate, initia
     cref: '',
     birthDate: '',
     professionalId: '',
+    studentsIds: [],
+    phone: '',
+    cep: '',
+
   })
 
   useEffect(() => {
@@ -75,31 +95,37 @@ export default function CompleteProfilePopup({ userId, onClose, onUpdate, initia
       cref: initialData?.cref || '',
       birthDate: initialData?.birthDate || '',
       professionalId: initialData?.professionalId || '',
+      studentsIds: initialData?.studentsIds || [],
+      phone: initialData?.phone || '',
+      cep: initialData?.cep || '',
     })
   }, [initialData])
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await getProfessionals()
-        setProfessionals(result)
-      } catch (error) {
-        console.error('Erro ao buscar profissionais:', error)
-      }
+    const fetchUsers = async () => {
+    if (userRole === 'aluno') {
+      const profs = await getProfessionals()
+      setProfessionals(profs)
+    } else if (userRole === 'profissional') {
+      const students = await getStudents()
+      setStudents(students)
     }
+  }
 
-    fetchData()
-  }, [])
+  fetchUsers()
+}, [userRole])
 
   const handleChange = (e) => {
     let { name, value } = e.target
 
     if (name === 'cpf') {
       value = formatCPF(value)
-    }
-
-    if (name === 'cref') {
+    } else if (name === 'cref') {
       value = formatCREF(value)
+    } else if (name === 'phone') {
+      value = formatPhone(value)
+    } else if (name === 'cep') {
+      value = formatCEP(value)
     }
 
     setFormData(prev => ({ ...prev, [name]: value }))
@@ -112,52 +138,60 @@ export default function CompleteProfilePopup({ userId, onClose, onUpdate, initia
     if (!formData.fullname.trim()) newErrors.fullname = 'Nome é obrigatório.'
     if (!formData.email.trim()) newErrors.email = 'Email é obrigatório.'
 
-    // if (userRole === 'aluno') {
-    //   if (!formData.cpf) {
-    //     newErrors.cpf = 'CPF é obrigatório.'
-    //   } else if (!isValidCPF(formData.cpf.replace(/\D/g, ''))) {
-    //     newErrors.cpf = 'CPF inválido.'
-    //   }
-    // }
+   if (userRole === 'aluno') {
+      const rawCPF = formData.cpf.replace(/\D/g, '')
 
-    // if (userRole === 'profissional') {
-    //   if (!formData.cref) {
-    //     newErrors.cref = 'CREF é obrigatório.'
-    //   } else if (!isValidCREF(formData.cref)) {
-    //     newErrors.cref = 'CREF inválido. Formato esperado: 000000-P/SP'
-    //   }
-    // }
+      if (!initialData?.cpf) {
+        if (!rawCPF) {
+          newErrors.cpf = 'CPF é obrigatório.'
+        } else if (!isValidCPF(rawCPF)) {
+          newErrors.cpf = 'CPF inválido.'
+        }
+      }
+    }
+
+  if (userRole === 'profissional') {
+    if (!formData.cref) {
+      newErrors.cref = 'CREF é obrigatório.'
+    } else if (!isValidCREF(formData.cref)) {
+      newErrors.cref = 'CREF inválido. Formato esperado: 000000-P/SP'
+    }
+  }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
   const handleConfirm = async () => {
-    if (!validate()) return
+  if (!validate()) return
 
-    const updatedData = {
-      ...formData,
-      cpf: formData.cpf ? formData.cpf.replace(/\D/g, '') : '',
-      cref: formData.cref || '',
-      profileCompleted: true,
-    }
-
-    if (userRole === 'aluno') {
-      delete updatedData.cref
-    } else {
-      delete updatedData.cpf
-      delete updatedData.professionalId
-    }
-
-    try {
-      await updateUserProfile(userId, updatedData)
-      const { password, ...dadosSemSenha } = updatedData
-      setUserInfo(dadosSemSenha)
-      onUpdate(updatedData)
-    } catch (error) {
-      console.error("Erro ao atualizar perfil:", error)
-    }
+  const updatedData = {
+    ...formData,
+    cpf: formData.cpf ? formData.cpf.replace(/\D/g, '') : '',
+    cref: formData.cref || '',
+    profileCompleted: true,
   }
+
+  if (userRole === 'aluno') {
+    delete updatedData.cref
+    delete updatedData.studentsIds
+  } else {
+    delete updatedData.cpf
+    delete updatedData.professionalId
+  }
+
+  try {
+    const response = await updateUserProfile(userId, updatedData)
+    console.log("Enviando dados atualizados:", updatedData)
+
+    const { password, ...dadosSemSenha } = updatedData
+    setUserInfo(dadosSemSenha)
+    onUpdate(updatedData)
+  } catch (error) {
+    console.error("Erro ao atualizar perfil:", error)
+  }
+}
+
 
   return (
     <Dialog open={true} onClose={onClose}>
@@ -228,7 +262,7 @@ export default function CompleteProfilePopup({ userId, onClose, onUpdate, initia
                 <label>Profissional (opcional)</label>
                 <select
                   name="professionalId"
-                  value={formData.professionalId.fullname}
+                  value={formData.professionalId}
                   onChange={handleChange}
                 >
                   <option value="">Nenhum</option>
@@ -242,13 +276,14 @@ export default function CompleteProfilePopup({ userId, onClose, onUpdate, initia
             </>
           )}
 
-          {(userRole || '').toLowerCase() === 'profissional' && (
+        {(userRole || '').toLowerCase() === 'profissional' && (
+          <>
             <div className={styles.formItem}>
               <label>CREF</label>
               <input
                 type="text"
                 name="cref"
-                maxLength={10}
+                maxLength={11}
                 value={formData.cref}
                 onChange={handleChange}
                 placeholder="000000-P/SP"
@@ -256,7 +291,28 @@ export default function CompleteProfilePopup({ userId, onClose, onUpdate, initia
               />
               {errors.cref && <span className={styles.error}>{errors.cref}</span>}
             </div>
-          )}
+
+            <div className={styles.formItem}>
+              <label>Alunos (opcional)</label>
+              <select
+                name="studentsIds"
+                multiple
+                value={formData.studentsIds}
+                onChange={(e) => {
+                  const options = Array.from(e.target.selectedOptions, opt => opt.value)
+                  setFormData(prev => ({ ...prev, studentsIds: options }))
+                }}
+              >
+                {students.map(student => (
+                  <option key={student._id} value={student._id}>
+                    {student.fullname || student.email}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </>
+        )}
+
         </div>
 
         <div className={styles.buttonGroup}>

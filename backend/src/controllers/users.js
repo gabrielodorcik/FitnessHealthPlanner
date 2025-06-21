@@ -23,7 +23,7 @@ export default class UsersControllers {
         try {
             const result = await this.dataAccess.deleteUser(userId)
             // console.log(users)
-            return ok(users)
+            return ok(result)
 
         } catch (error) {
             return serverError(error)
@@ -48,6 +48,37 @@ export default class UsersControllers {
             return serverError(error)
         }
     }
+
+    async getStudents() {
+        try {
+            const students = await this.dataAccess.getStudents()
+            return ok(students)
+        } catch (error) {
+            return serverError(error)
+        }
+    }
+
+async getStudentsByIds(req) {
+  try {
+    const ids = req.body.ids // espera: { ids: ["id1", "id2"] }
+    if (!Array.isArray(ids)) {
+      return {
+        success: false,
+        statusCode: 400,
+        body: { message: "Ids devem estar em um array." }
+      }
+    }
+
+    const students = await this.dataAccess.getStudentsByIds(ids)
+    return ok(students)
+
+  } catch (error) {
+    return serverError(error)
+  }
+}
+
+
+
 
     async getUserProfile(userId) {
         try {

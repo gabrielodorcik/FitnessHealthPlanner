@@ -15,12 +15,10 @@ export function WorkoutProvider({ children }) {
             itemToAdd.quantity = 1
 
             setWorkoutItems([...workoutItems, itemToAdd])
-            console.log('Exercicio Adicionado!')
+            //console.log('Exercicio Adicionado!')
         } else{
-            console.log('Esse exercicio já está na sua lista')
+            //console.log('Esse exercicio já está na sua lista')
         }
-        
-        
 
     }
 
@@ -40,7 +38,7 @@ export function WorkoutProvider({ children }) {
     }
 
     return (
-        <WorkoutContext.Provider value={{ removeFromWorkout, addToWorkout, workoutItems, updateFromWorkout, clearWorkout}}>
+        <WorkoutContext.Provider value={{ removeFromWorkout, addToWorkout, workoutItems, updateFromWorkout, clearWorkout, setWorkoutItems}}>
             {children}
         </WorkoutContext.Provider>
     )

@@ -15,6 +15,7 @@ export default class ExercisesDataAccess {
 
         return result
     }
+    
 
     async getAvailableExercises(){
         const result = await Mongo.db

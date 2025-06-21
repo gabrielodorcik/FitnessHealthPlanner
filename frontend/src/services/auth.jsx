@@ -160,6 +160,50 @@ export default function useAuthServices() {
     }
   };
 
+  const getStudents = async () => {
+    try {
+      const response = await fetch(`${userUrl}/students`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.body?.text || 'Erro ao buscar alunos.');
+      }
+
+      return result.body;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+//  const getUserProfile = async (userId) => {
+//   try {
+//     const response = await fetch(`${userUrl}/profile/${userId}`, {
+//       method: 'GET',
+//       headers: {
+//         'Content-Type': 'application/json'
+//       }
+//     })
+
+//     const result = await response.json()
+
+//     if (!response.ok) {
+//       throw new Error(result?.body?.text || 'Erro ao buscar perfil.')
+//     }
+
+//     return result.body
+//   } catch (error) {
+//     throw error
+//   }
+// }
+
+
+
   return {
     login,
     signup,
@@ -167,6 +211,8 @@ export default function useAuthServices() {
     resetPassword,
     updateUserProfile,
     getProfessionals,
+    getStudents,
+    
     authLoading
   };
 }

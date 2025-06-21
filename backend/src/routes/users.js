@@ -11,6 +11,18 @@ usersRouter.get('/', async (req, res) => {
     res.status(statusCode).send({ success, statusCode, body })
 })
 
+usersRouter.get('/students', async (req, res) => {
+  const { success, statusCode, body } = await usersControllers.getStudents()
+  res.status(statusCode).send({ success, statusCode, body })
+})
+
+
+
+usersRouter.get('/professionals', async (req, res) => {
+  const { success, statusCode, body } = await usersControllers.getProfessionals()
+  res.status(statusCode).send({ success, statusCode, body })
+})
+
 usersRouter.get('/:id', async (req, res) => {
   const { success, statusCode, body } = await usersControllers.getUserProfile(req.params.id);
   res.status(statusCode).send({ success, statusCode, body });
@@ -26,10 +38,13 @@ usersRouter.put('/:id', async (req, res) => {
     res.status(statusCode).send({ success, statusCode, body })
 })
 
-usersRouter.get('/professionals', async (req, res) => {
-  const { success, statusCode, body } = await usersControllers.getProfessionals()
-  res.status(statusCode).send({ success, statusCode, body })
+
+usersRouter.post('/students', async (req, res) => {
+  const result = await usersControllers.getStudentsByIds(req)
+  res.status(result.statusCode).json(result)
 })
+
+
 
 usersRouter.get('/profile/:id', async (req, res) => {
     const controller = new UsersControllers();

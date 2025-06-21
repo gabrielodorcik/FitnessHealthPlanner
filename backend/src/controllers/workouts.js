@@ -67,65 +67,79 @@ export default class WorkoutsControllers {
     }
 
     async updateWorkoutStatusController(req, res) {
-        try {
-            const workoutId = req.params.id
-            const { pickupStatus } = req.body
+  try {
+    const workoutId = req.params.id;
+    const { pickupStatus } = req.body;
 
-            const workout = await Mongo.db.collection('workouts').findOne({ _id: new ObjectId(workoutId) })
+    const workout = await Mongo.db.collection('workouts').findOne({ _id: new ObjectId(workoutId) });
 
-            if (!workout) {
-                return res.status(404).json({
-                    success: false,
-                    statusCode: 404,
-                    body: "Treino não encontrado."
-                })
-            }
-
-            const userId = workout.userId
-            const conflictingStatus = pickupStatus === "Editando" ? "Em andamento" : "Editando"
-
-            const existingConflict = await Mongo.db.collection('workouts').findOne({
-                _id: { $ne: new ObjectId(workoutId) },
-                userId: userId,
-                pickupStatus: { $in: [pickupStatus, conflictingStatus] }
-            })
-
-            if (existingConflict) {
-                return res.status(400).json({
-                    success: false,
-                    statusCode: 400,
-                    body: `Já existe outro treino com status "${existingConflict.pickupStatus}". Finalize ou cancele ele antes de alterar outro.`
-                })
-            }
-
-            const result = await Mongo.db
-                .collection('workouts')
-                .updateOne(
-                    { _id: new ObjectId(workoutId) },
-                    { $set: { pickupStatus } }
-                )
-
-            if (result.modifiedCount === 0) {
-                return res.status(400).json({
-                    success: false,
-                    statusCode: 400,
-                    body: "Status do treino não foi alterado."
-                })
-            }
-
-            res.status(200).json({
-                success: true,
-                statusCode: 200,
-                body: "Status do treino atualizado com sucesso."
-            })
-
-        } catch (error) {
-            console.error(error)
-            res.status(500).json({
-                success: false,
-                statusCode: 500,
-                body: "Erro ao atualizar status do treino."
-            })
-        }
+    if (!workout) {
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        body: "Treino não encontrado."
+      });
     }
+
+    const now = new Date();
+    const durationDate = new Date(workout.duration + "T23:59:59");
+
+    console.log("Verificando data limite:", durationDate, "| Agora:", now);
+
+    // ⚠️ BLOQUEIO ABSOLUTO: não permite nenhuma alteração se já passou da data
+    if (now >= durationDate) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        body: "Não é possível alterar o status de um treino que já passou da data final."
+      });
+    }
+
+    // ⚠️ Verifica se já existe outro treino em andamento
+    if (pickupStatus === "Em andamento") {
+      const existingInProgress = await Mongo.db.collection('workouts').findOne({
+        userId: workout.userId,
+        pickupStatus: "Em andamento",
+        _id: { $ne: new ObjectId(workoutId) }
+      });
+
+      if (existingInProgress) {
+        return res.status(400).json({
+          success: false,
+          statusCode: 400,
+          body: "Já existe outro treino em andamento para este usuário. Finalize-o antes de alterar outro para 'Em andamento'."
+        });
+      }
+    }
+
+    // ✅ Atualiza o status normalmente
+    const updateResult = await Mongo.db.collection('workouts').updateOne(
+      { _id: new ObjectId(workoutId) },
+      { $set: { pickupStatus } }
+    );
+
+    if (updateResult.modifiedCount === 0) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        body: "Status do treino não foi alterado."
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      statusCode: 200,
+      body: "Status do treino atualizado com sucesso."
+    });
+
+  } catch (error) {
+    console.error("Erro ao atualizar status do treino:", error);
+    return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      body: "Erro ao atualizar status do treino."
+    });
+  }
+}
+
 }

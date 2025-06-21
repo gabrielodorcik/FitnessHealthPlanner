@@ -29,7 +29,7 @@ export default function Workouts() {
     }
   }, [])
 
-  const [statusFilter, setStatusFilter] = useState("Geral")
+  const [statusFilter, setStatusFilter] = useState("Em andamento")
 
   useEffect(() => {
     if (!authData) {
@@ -39,23 +39,55 @@ export default function Workouts() {
     }
   }, [authData, refetchWorkouts])
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date()
+
+      workoutsList.forEach(async (workout) => {
+        if (workout.pickupStatus === "Em andamento") {
+          const endTime = new Date(workout.duration + "T23:59:59")
+          console.log(`Verificando treino ${workout._id} - Fim: ${endTime} | Agora: ${now}`)
+
+          if (now >= endTime) {
+            console.log(`Finalizando treino ${workout._id}`)
+            await updateWorkoutStatusController(workout._id, "Finalizado")
+            setRefetchWorkouts(true)
+          }
+        }
+      })
+    }, 60000)
+
+    return () => clearInterval(interval)
+  }, [workoutsList])
+
+
+
   const handleLogout = () => {
     logout()
     return navigate("/auth")
   }
 
   const handleStatusChange = async (id, newStatus) => {
-    try {
-      await updateWorkoutStatusController(id, newStatus)
-      setRefetchWorkouts(true)
+  try {
+    await updateWorkoutStatusController(id, newStatus)
+    setRefetchWorkouts(true)
 
-      if (newStatus === 'Editando') {
-        navigate("/newWorkout")
-      }
-    } catch (err) {
-      alert(err?.response?.data?.body || "Erro ao atualizar o status do treino.")
+    if (newStatus === 'Editando') {
+      navigate("/newWorkout")
+    }
+  } catch (err) {
+    const errorMsg = err?.response?.data?.body || err?.message || "Erro ao atualizar o status do treino."
+
+    // Exibe toast se o erro for por data vencida
+    if (errorMsg.includes("data final")) {
+      alert("Este treino já passou da data final e não pode ser alterado.")
+    } else {
+      alert(errorMsg)
     }
   }
+  
+}
+
 
   const filteredWorkouts = statusFilter === "Geral"
     ? workoutsList
@@ -74,38 +106,34 @@ export default function Workouts() {
       <div className={styles.nameContainer}>
         <h1>Meus Treinos</h1>
         <p>
-          {" "}
           {new Date().toLocaleDateString("PT-BR", {
             weekday: "long",
             day: "numeric",
             month: "long"
           }).toUpperCase()}
         </p>
-
-       
-
-
       </div>
 
-       <div className={styles.statusButtonsContainer}>
-          {["Geral", "Em andamento", "Finalizado", "Cancelado", "Editando"].map((status) => (
-            <button
-              key={status}
-              className={`${styles.statusButton} ${statusFilter === status ? styles.active : ""}`}
-              onClick={() => setStatusFilter(status)}
-            >
-              {status}
-            </button>
-          ))}
-        </div>
+      <div className={styles.statusButtonsContainer}>
+        {["Geral", "Em andamento", "Finalizado", "Cancelado", "Editando"].map((status) => (
+          <button
+            key={status}
+            className={`${styles.statusButton} ${statusFilter === status ? styles.active : ""}`}
+            onClick={() => setStatusFilter(status)}
+          >
+            {status}
+          </button>
+        ))}
+      </div>
 
       {filteredWorkouts.length > 0 ? (
         <div className={styles.workoutsContainer}>
           {filteredWorkouts.map((workout) => (
             <div key={workout._id} className={styles.workoutContainer}>
               <h2 className={styles.titleName}>{workout.workoutName || "Sem nome"}</h2>
-              <h4>Treino para: {workout.assignedToId || authData?.user?.fullname}</h4>
+              <h4>Treino para: {workout.assignedToDetails?.[0]?.fullname || authData?.user?.fullname}</h4>
               <h4>Tipo: {workout.type}</h4>
+              <h4>Final em: {workout.duration}</h4>
 
               <div>
                 {workout.pickupStatus === "Em andamento" && (
@@ -158,7 +186,6 @@ export default function Workouts() {
       ) : (
         <div>
           Nenhum treino encontrado para o filtro selecionado.
-          
         </div>
       )}
     </div>
